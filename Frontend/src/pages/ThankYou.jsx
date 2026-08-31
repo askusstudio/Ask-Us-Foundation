@@ -44,11 +44,11 @@ const ThankYou = () => {
       ctx.font = `600 ${Math.round(canvas.width * 0.026)}px 'Cinzel', 'Georgia', serif`;
       ctx.fillText(fullName, canvas.width / 2, canvas.height * 0.515);
 
-      // 3. Draw Issue Date (Above the bottom-left ISSUE DATE line)
-      ctx.fillStyle = '#344054';
+// 3. Draw Issue Date (Perfect alignment with baseline)
+      ctx.fillStyle = '#1E293B';
       ctx.textAlign = 'left';
-      ctx.font = `600 ${Math.round(canvas.width * 0.017)}px sans-serif`;
-      ctx.fillText(displayDate, canvas.width * 0.175, canvas.height * 0.845);
+      ctx.font = `500 ${Math.round(canvas.width * 0.015)}px sans-serif`;
+      ctx.fillText(displayDate, canvas.width * 0.178, canvas.height * 0.840);
 
       // 4. Generate downloadable image url
       const dataUrl = canvas.toDataURL('image/png', 1.0);
