@@ -44,11 +44,16 @@ const ThankYou = () => {
       ctx.font = `600 ${Math.round(canvas.width * 0.026)}px 'Cinzel', 'Georgia', serif`;
       ctx.fillText(fullName, canvas.width / 2, canvas.height * 0.515);
 
-// 3. Draw Issue Date (Perfect alignment with baseline)
-      ctx.fillStyle = '#1E293B';
+// 3. Hide the pre-printed underline and draw clean Issue Date
+      // Cover pre-printed line with certificate background tone
+      ctx.fillStyle = '#FAF8F4';
+      ctx.fillRect(canvas.width * 0.24, canvas.height * 0.850, canvas.width * 0.20, canvas.height * 0.015);
+
+      // Draw clean Date text without line
+      ctx.fillStyle = '#102A43';
       ctx.textAlign = 'left';
-      ctx.font = `500 ${Math.round(canvas.width * 0.015)}px sans-serif`;
-      ctx.fillText(displayDate, canvas.width * 0.178, canvas.height * 0.840);
+      ctx.font = `500 ${Math.round(canvas.width * 0.0155)}px 'Cinzel', 'Georgia', serif`;
+      ctx.fillText(displayDate, canvas.width * 0.252, canvas.height * 0.850);
 
       // 4. Generate downloadable image url
       const dataUrl = canvas.toDataURL('image/png', 1.0);
