@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import empowerEd from "../assets/image/empowerEd.jpg";
 import empowerEd2 from "../assets/image/empowerEd2.jpg";
 import empowerEd3 from "../assets/image/empowerEd3.jpg";
@@ -8,17 +8,37 @@ import revolutionaari3 from "../assets/image/revolutionaari3.jpg";
 import CampaignCard from "../components/CampaignCard";
 import green from "../assets/image/green.jpg";
 import sharang from "../assets/image/sharang.png";
-import { useState, useEffect } from "react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
+const defaultCampaigns = [
+  {
+    id: "empowered",
+    title: "EmpowerEd Literacy Drive",
+    description: "Supporting education and providing kits for children.",
+    wing: "EDUCATION_WING",
+    imageUrl: "empowerEd",
+    raised: 42000,
+    goal: 100000,
+    donations: 18
+  },
+  {
+    id: "revolutionaari",
+    title: "RevolutioNAARI Women Empowerment",
+    description: "Vocational skill training and self-reliance workshops for rural women.",
+    wing: "WOMEN_WING",
+    imageUrl: "revolutionaari",
+    raised: 65000,
+    goal: 150000,
+    donations: 24
+  }
+];
+
 export async function getCampaigns() {
   const response = await fetch(`${API_BASE_URL}/api/campaigns`);
-
   if (!response.ok) {
     throw new Error("Failed to fetch campaigns");
   }
-
   return response.json();
 }
 
@@ -31,16 +51,19 @@ const Wings = () => {
 
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
         const data = await getCampaigns();
-        setCampaigns(data);
+        if (data && data.length > 0) {
+          setCampaigns(data);
+        } else {
+          setCampaigns(defaultCampaigns);
+        }
       } catch (err) {
-        console.error(err);
-        setError("Unable to load campaigns.");
+        console.warn("Backend API unavailable, displaying default campaigns.", err);
+        setCampaigns(defaultCampaigns);
       } finally {
         setLoading(false);
       }
@@ -69,17 +92,9 @@ const Wings = () => {
         </p>
       )}
 
-      {/* Error */}
-      {!loading && error && (
-        <p className="text-red-500 text-lg">
-          {error}
-        </p>
-      )}
-
       {/* Campaign Cards */}
-      {!loading && !error && (
+      {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full max-w-6xl">
-
           {campaigns.map((campaign) => {
             const cardImg = campaignImages[campaign.imageUrl] || campaign.imageUrl || empowerEd;
 
@@ -96,7 +111,6 @@ const Wings = () => {
               />
             );
           })}
-
         </div>
       )}
 
