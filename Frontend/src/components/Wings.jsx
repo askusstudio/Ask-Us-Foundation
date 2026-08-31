@@ -15,7 +15,7 @@ const defaultCampaigns = [
   {
     id: "empowered",
     title: "EmpowerEd Literacy Drive",
-    description: "Supporting education and providing kits for children.",
+    description: "Supporting education, providing learning kits and school supplies for children.",
     wing: "EDUCATION_WING",
     imageUrl: "empowerEd",
     raised: 42000,
@@ -25,12 +25,22 @@ const defaultCampaigns = [
   {
     id: "revolutionaari",
     title: "RevolutioNAARI Women Empowerment",
-    description: "Vocational skill training and self-reliance workshops for rural women.",
+    description: "Vocational skill training, health awareness and self-reliance workshops for rural women.",
     wing: "WOMEN_WING",
     imageUrl: "revolutionaari",
     raised: 65000,
     goal: 150000,
     donations: 24
+  },
+  {
+    id: "sharang",
+    title: "Sharang Project",
+    description: "Environmental sustainability, green plantation drives, and health initiatives across communities.",
+    wing: "HEALTH_WING",
+    imageUrl: "sharang",
+    raised: 85000,
+    goal: 200000,
+    donations: 30
   }
 ];
 
@@ -44,9 +54,9 @@ export async function getCampaigns() {
 
 const Wings = () => {
   const campaignImages = {
-    empowerEd: [empowerEd2, empowerEd3],
+    empowerEd: [empowerEd, empowerEd2, empowerEd3],
     revolutionaari: [revolutionaari, revolutionaari2, revolutionaari3],
-    sharang: sharang,
+    sharang: sharang || green,
   };
 
   const [campaigns, setCampaigns] = useState([]);
@@ -56,7 +66,7 @@ const Wings = () => {
     const fetchCampaigns = async () => {
       try {
         const data = await getCampaigns();
-        if (data && data.length > 0) {
+        if (data && Array.isArray(data) && data.length > 0) {
           setCampaigns(data);
         } else {
           setCampaigns(defaultCampaigns);
@@ -92,9 +102,9 @@ const Wings = () => {
         </p>
       )}
 
-      {/* Campaign Cards */}
+      {/* Campaign Cards (3-column responsive grid) */}
       {!loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 w-full max-w-7xl">
           {campaigns.map((campaign) => {
             const cardImg = campaignImages[campaign.imageUrl] || campaign.imageUrl || empowerEd;
 
