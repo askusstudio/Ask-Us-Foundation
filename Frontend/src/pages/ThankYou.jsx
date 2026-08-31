@@ -38,11 +38,11 @@ const ThankYou = () => {
       // 1. Draw the official certificate background
       ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-      // 2. Draw Donor Full Name (Under "THIS CERTIFICATE IS PROUDLY PRESENTED TO:")
-      ctx.fillStyle = '#101828';
+// 2. Draw Donor Full Name (Balanced elegant font size & spacing)
+      ctx.fillStyle = '#0F172A';
       ctx.textAlign = 'center';
-      ctx.font = `bold ${Math.round(canvas.width * 0.038)}px 'Cinzel', 'Playfair Display', Georgia, serif`;
-      ctx.fillText(fullName.toUpperCase(), canvas.width / 2, canvas.height * 0.505);
+      ctx.font = `600 ${Math.round(canvas.width * 0.026)}px 'Cinzel', 'Georgia', serif`;
+      ctx.fillText(fullName, canvas.width / 2, canvas.height * 0.515);
 
       // 3. Draw Issue Date (Above the bottom-left ISSUE DATE line)
       ctx.fillStyle = '#344054';
