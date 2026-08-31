@@ -1,7 +1,6 @@
 package org.askusfoundation.backend.entity;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -9,6 +8,32 @@ import java.util.UUID;
 @Table(name = "campaigns")
 public class Campaign {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal goal;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal raised;
+
+    private Integer donations;
+
+    private Boolean active;
+
+    @Column(name = "wing")
+    private String wing;
+
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -73,27 +98,11 @@ public class Campaign {
         this.active = active;
     }
 
+    public String getWing() {
+        return wing;
+    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    private String title;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @Column(name = "image_url")
-    private String imageUrl;
-
-    @Column(precision = 12, scale = 2)
-    private BigDecimal goal;
-
-    @Column(precision = 12, scale = 2)
-    private BigDecimal raised;
-
-    private Integer donations;
-
-    private Boolean active;
-    // getters and setters
+    public void setWing(String wing) {
+        this.wing = wing;
+    }
 }

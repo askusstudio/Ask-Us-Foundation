@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/campaigns")
-@CrossOrigin(origins = {"http://localhost:5173", "https://foundation-frontend-inky.vercel.app","https://askusfoundation.org","https://www.askusfoundation.org"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://foundation-frontend-inky.vercel.app", "https://askusfoundation.org", "https://www.askusfoundation.org"})
 public class CampaignController {
 
     private final CampaignRepository campaignRepository;
@@ -17,8 +17,12 @@ public class CampaignController {
         this.campaignRepository = campaignRepository;
     }
 
+    // Agar wing parameter pass hoga toh specific wing ke active campaigns aayenge, nahi toh saare active campaigns
     @GetMapping
-    public List<Campaign> getCampaigns() {
+    public List<Campaign> getCampaigns(@RequestParam(required = false) String wing) {
+        if (wing != null && !wing.isBlank()) {
+            return campaignRepository.findByWingAndActiveTrue(wing);
+        }
         return campaignRepository.findByActiveTrue();
     }
 

@@ -10,8 +10,10 @@ import green from "../assets/image/green.jpg";
 import sharang from "../assets/image/sharang.png";
 import { useState, useEffect } from "react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
 export async function getCampaigns() {
-  const response = await fetch("https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run/api/campaigns");
+  const response = await fetch(`${API_BASE_URL}/api/campaigns`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch campaigns");
@@ -20,13 +22,13 @@ export async function getCampaigns() {
   return response.json();
 }
 
-
 const Wings = () => {
   const campaignImages = {
     empowerEd: [empowerEd2, empowerEd3],
     revolutionaari: [revolutionaari, revolutionaari2, revolutionaari3],
-    sharang,
+    sharang: sharang,
   };
+
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -78,18 +80,22 @@ const Wings = () => {
       {!loading && !error && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full max-w-6xl">
 
-          {campaigns.map((campaign) => (
-            <CampaignCard
-              key={campaign.id}
-              id={campaign.id}
-              image={campaignImages[campaign.imageUrl]}
-              title={campaign.title}
-              description={campaign.description}
-              raised={campaign.raised}
-              goal={campaign.goal}
-              donations={campaign.donations}
-            />
-          ))}
+          {campaigns.map((campaign) => {
+            const cardImg = campaignImages[campaign.imageUrl] || campaign.imageUrl || empowerEd;
+
+            return (
+              <CampaignCard
+                key={campaign.id}
+                id={campaign.id}
+                image={cardImg}
+                title={campaign.title}
+                description={campaign.description}
+                raised={campaign.raised || 0}
+                goal={campaign.goal || 100000}
+                donations={campaign.donations || 0}
+              />
+            );
+          })}
 
         </div>
       )}

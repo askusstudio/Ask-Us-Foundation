@@ -7,9 +7,12 @@ import com.razorpay.Utils;
 import org.askusfoundation.backend.dto.DonationRequest;
 import org.askusfoundation.backend.dto.MembershipDto;
 import org.askusfoundation.backend.entity.Campaign;
+import org.askusfoundation.backend.entity.Donation;
 import org.askusfoundation.backend.repository.CampaignRepository;
+import org.askusfoundation.backend.repository.DonationRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "https://foundation-frontend-inky.vercel.app","https://askusfoundation.org","https://www.askusfoundation.org"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://foundation-frontend-inky.vercel.app", "https://askusfoundation.org", "https://www.askusfoundation.org"})
 @RequestMapping("/razorpay")
 public class RazorPayController {
 
@@ -29,9 +32,11 @@ public class RazorPayController {
     private String keySecret;
 
     private final CampaignRepository campaignRepository;
+    private final DonationRepository donationRepository;
 
-    public RazorPayController(CampaignRepository campaignRepository) {
+    public RazorPayController(CampaignRepository campaignRepository, DonationRepository donationRepository) {
         this.campaignRepository = campaignRepository;
+        this.donationRepository = donationRepository;
     }
 
     @PostMapping("/donation/create-order")
@@ -40,17 +45,21 @@ public class RazorPayController {
             RazorpayClient client = new RazorpayClient(keyId, keySecret);
 
             JSONObject request = new JSONObject();
-            request.put("amount", donation.getAmount() * 100); // ₹ → paise
+            request.put("amount", donation.getAmount() * 100); // INR to paise
             request.put("currency", "INR");
             request.put("receipt", "receipt_" + System.currentTimeMillis());
 
-            // Donor info notes mein save karo
+            // Notes me donation aur leaderboard privacy details
             JSONObject notes = new JSONObject();
             notes.put("payment_type", "DONATION");
-            notes.put("donor_name", donation.getFirstName() + " " + donation.getLastName());
+            notes.put("first_name", donation.getFirstName() != null ? donation.getFirstName() : "");
+            notes.put("last_name", donation.getLastName() != null ? donation.getLastName() : "");
             notes.put("donor_email", donation.getEmail());
             notes.put("donor_phone", donation.getPhone());
             notes.put("amount", String.valueOf(donation.getAmount()));
+            notes.put("wing", donation.getWing() != null ? donation.getWing() : "GENERAL");
+            notes.put("hide_from_leaderboard", String.valueOf(donation.isHideFromLeaderboard()));
+
             if (donation.getCampaignId() != null && !donation.getCampaignId().isBlank()) {
                 notes.put("campaign_id", donation.getCampaignId());
             }
@@ -70,11 +79,10 @@ public class RazorPayController {
             RazorpayClient client = new RazorpayClient(keyId, keySecret);
 
             JSONObject request = new JSONObject();
-            request.put("amount", membership.getAmount() * 100); // ₹ → paise
+            request.put("amount", membership.getAmount() * 100);
             request.put("currency", "INR");
             request.put("receipt", "receipt_" + System.currentTimeMillis());
 
-            // Donor info notes mein save karo
             JSONObject notes = new JSONObject();
             notes.put("payment_type", "MEMBERSHIP");
             notes.put("membership_type", membership.getMembership_type());
@@ -92,7 +100,6 @@ public class RazorPayController {
     }
 
     @PostMapping("/payment/verify")
-    @CrossOrigin(origins = {"http://localhost:5173", "https://foundation-frontend-inky.vercel.app","https://askusfoundation.org","https://www.askusfoundation.org"})
     public String verifyPayment(@RequestBody Map<String, String> data) {
         try {
             String orderId = data.get("razorpay_order_id");
@@ -106,56 +113,70 @@ public class RazorPayController {
 
             boolean isValid = Utils.verifyPaymentSignature(options, keySecret);
 
-
             if (!isValid) {
-                System.out.println("Invalid signature!");
                 return "{\"status\": \"failed\"}";
             }
 
-            System.out.println("Payment verified!");
-
-            // Fetch the order back from Razorpay itself — this is the source of truth,
-            // not anything the client sends in this request, so it can't be tampered with.
             RazorpayClient client = new RazorpayClient(keyId, keySecret);
             Order order = client.orders.fetch(orderId);
             JSONObject notes = order.get("notes");
 
-            if (notes != null && notes.has("payment_type")
-                    && "DONATION".equals(notes.getString("payment_type"))
-                    && notes.has("campaign_id")) {
+            if (notes != null && "DONATION".equals(notes.optString("payment_type"))) {
+                // 1. Donation Record Database me save karein
+                Donation donation = new Donation();
+                donation.setFirstName(notes.optString("first_name", "Anonymous"));
+                donation.setLastName(notes.optString("last_name", ""));
+                donation.setEmail(notes.optString("donor_email", ""));
+                donation.setPhone(notes.optString("donor_phone", ""));
+                donation.setAmount(Double.parseDouble(notes.optString("amount", "0")));
+                donation.setWing(notes.optString("wing", "GENERAL"));
+                donation.setHideFromLeaderboard(Boolean.parseBoolean(notes.optString("hide_from_leaderboard", "false")));
+                donation.setCampaignId(notes.optString("campaign_id", null));
 
-                String campaignIdStr = notes.getString("campaign_id");
-                String amountStr = notes.optString("amount", null);
+                donationRepository.save(donation);
 
-                try {
-                    UUID campaignId = UUID.fromString(campaignIdStr);
-                    Optional<Campaign> campaignOpt = campaignRepository.findById(campaignId);
+                // 2. Agar campaign associated hai toh raised amount update karein
+                if (notes.has("campaign_id") && !notes.optString("campaign_id").isBlank()) {
+                    String campaignIdStr = notes.getString("campaign_id");
+                    try {
+                        UUID campaignId = UUID.fromString(campaignIdStr);
+                        Optional<Campaign> campaignOpt = campaignRepository.findById(campaignId);
 
-                    if (campaignOpt.isPresent() && amountStr != null) {
-                        Campaign campaign = campaignOpt.get();
-                        BigDecimal donatedAmount = new BigDecimal(amountStr);
+                        if (campaignOpt.isPresent()) {
+                            Campaign campaign = campaignOpt.get();
+                            BigDecimal donatedAmount = new BigDecimal(notes.optString("amount", "0"));
 
-                        BigDecimal currentRaised = campaign.getRaised() != null ? campaign.getRaised() : BigDecimal.ZERO;
-                        Integer currentDonations = campaign.getDonations() != null ? campaign.getDonations() : 0;
+                            BigDecimal currentRaised = campaign.getRaised() != null ? campaign.getRaised() : BigDecimal.ZERO;
+                            Integer currentDonations = campaign.getDonations() != null ? campaign.getDonations() : 0;
 
-                        campaign.setRaised(currentRaised.add(donatedAmount));
-                        campaign.setDonations(currentDonations + 1);
-                        campaignRepository.save(campaign);
-
-                        System.out.println("Campaign updated: " + campaign.getId());
-                    } else {
-                        System.out.println("Campaign not found or amount missing for id: " + campaignIdStr);
+                            campaign.setRaised(currentRaised.add(donatedAmount));
+                            campaign.setDonations(currentDonations + 1);
+                            campaignRepository.save(campaign);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid campaign_id format: " + campaignIdStr);
                     }
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Invalid campaign_id in order notes: " + campaignIdStr);
                 }
             }
 
             return "{\"status\": \"success\"}";
 
         } catch (RazorpayException e) {
-            System.out.println("Error: " + e);
             return "{\"status\": \"error\"}";
         }
+    }
+
+    // Leaderboard Data API Endpoint
+    @GetMapping("/leaderboard")
+    public ResponseEntity<?> getLeaderboard(@RequestParam(defaultValue = "WOMEN_WING") String wing) {
+        return ResponseEntity.ok(donationRepository.findByWingAndHideFromLeaderboardFalseOrderByAmountDesc(wing));
+    }
+
+    // Wing Stats API Endpoint (Donors count & Total raised)
+    @GetMapping("/stats")
+    public ResponseEntity<?> getWingStats(@RequestParam(defaultValue = "WOMEN_WING") String wing) {
+        long totalDonors = donationRepository.countByWing(wing);
+        Double totalAmount = donationRepository.sumAmountByWing(wing);
+        return ResponseEntity.ok(Map.of("totalDonors", totalDonors, "totalAmount", totalAmount != null ? totalAmount : 0.0));
     }
 }

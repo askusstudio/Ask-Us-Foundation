@@ -9,6 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, UUID> {
-
     List<Campaign> findByActiveTrue();
+    
+    // Wing-wise active campaigns fetch karne ke liye
+    List<Campaign> findByWingAndActiveTrue(String wing);
 }
