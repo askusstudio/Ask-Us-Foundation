@@ -7,11 +7,12 @@ import SupportForm from '../components/SupportSection'
 import EmotionalCard from '../components/EmotionalCard'
 import Footer from '../components/Footer'
 import CTA from '../components/CTA'
-
+import SharangPopup from '../components/SharangPopup'
 
 const Home = () => {
     return (
         <div className='relative'>
+            <SharangPopup />
             <Navbar />
             <Hero />
             <Gallery />

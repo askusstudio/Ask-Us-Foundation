@@ -11,7 +11,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Donate from "./pages/Donate"
 import WingsDetail from "./pages/Wing"
 import ThankYou from "./pages/ThankYou"
-
+import SharangLanding from "./pages/SharangLanding"
 
 function App() {
   return (
@@ -29,7 +29,10 @@ function App() {
         <Route path="/donate" element={<Donate />} />
         <Route path="/wing/:title" element={<WingsDetail />} />
         <Route path="/thank-you" element={<ThankYou />} />
-
+        
+        {/* Sharang 2026 Dedicated Landing Page Routes */}
+        <Route path="/sharang" element={<SharangLanding />} />
+        <Route path="/sharang-2026" element={<SharangLanding />} />
       </Routes>
     </BrowserRouter>
   )
