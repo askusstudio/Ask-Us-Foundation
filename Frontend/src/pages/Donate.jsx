@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Leaderboard from '../components/Leaderboard';
 import { FaHeart, FaLock, FaShieldAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -105,17 +106,14 @@ const Donate = () => {
           };
 
           try {
-            // Attempt backend verification
             await axios.post(`${API_BASE_URL}/razorpay/payment/verify`, {
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_order_id: paymentResponse.razorpay_order_id,
               razorpay_signature: paymentResponse.razorpay_signature,
             });
-            // Irrespective of verification JSON response content, if it doesn't crash, proceed.
             onSuccessNavigate();
           } catch (err) {
             console.warn("Backend verification failed but payment captured by Razorpay:", err);
-            // FAILSAFE: Payment is done on Razorpay window. Direct user to Thank You page anyway.
             onSuccessNavigate();
           } finally {
             setIsLoading(false);
@@ -268,7 +266,7 @@ const Donate = () => {
                 type="button"
                 onClick={handleDonate}
                 disabled={isLoading}
-                className="w-full bg-[#F99B2A] hover:bg-[#E07B0A] text-white font-bold text-lg py-5 rounded-2xl transition-all duration-300 shadow-[0_8px_30px_rgb(249,155,42,0.3)] hover:shadow-[0_8px_30px_rgb(249,155,42,0.5)] transform hover:-translate-y-1 disabled:opacity-50"
+                className="w-full bg-[#F99B2A] hover:bg-[#E07B0A] text-white font-bold text-lg py-5 rounded-2xl transition-all duration-300 shadow-[0_8px_30px_rgb(249,155,42,0.3)] hover:shadow-[0_8px_30px_rgb(249,155,42,0.5)] transform hover:-translate-y-1 disabled:opacity-50 cursor-pointer"
               >
                 {isLoading ? "Processing..." : `Donate ${amount === 'custom' ? (customAmount ? `₹${customAmount}` : '') : `₹${amount}`} Now`}
               </button>
@@ -307,6 +305,12 @@ const Donate = () => {
             </div>
 
           </div>
+
+          {/* DONATION SECTION LEADERBOARD */}
+          <div className="mt-14">
+            <Leaderboard />
+          </div>
+
         </div>
       </main>
 
