@@ -8,6 +8,7 @@ export default function CampaignCard({ id, image, title, description, raised, go
   // Support both a single image (string) and multiple images (array) for auto-slide
   const images = Array.isArray(image) ? image : [image];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (images.length <= 1) return;
@@ -47,8 +48,9 @@ export default function CampaignCard({ id, image, title, description, raised, go
             {images.map((_, idx) => (
               <span
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? "w-4 bg-white" : "w-1.5 bg-white/60"
-                  }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === activeIndex ? "w-4 bg-white" : "w-1.5 bg-white/60"
+                }`}
               />
             ))}
           </div>
@@ -61,9 +63,20 @@ export default function CampaignCard({ id, image, title, description, raised, go
           {title}
         </h3>
 
-        <p className="text-sm sm:text-base text-gray-700 mb-6 line-clamp-3">
-          {description}
-        </p>
+        <div className="mb-6">
+          <p className={`text-sm sm:text-base text-gray-700 leading-relaxed ${!isExpanded ? "line-clamp-3" : ""}`}>
+            {description}
+          </p>
+          {description && description.length > 110 && (
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-[#E07B0A] hover:text-[#C56500] font-bold text-xs sm:text-sm mt-1.5 inline-block cursor-pointer underline underline-offset-2"
+            >
+              {isExpanded ? "Show Less" : "Read More"}
+            </button>
+          )}
+        </div>
 
         {/* Progress Section (Pushed to the bottom using mt-auto) */}
         <div className="mt-auto">
@@ -82,8 +95,8 @@ export default function CampaignCard({ id, image, title, description, raised, go
           {/* Stats */}
           <div className="flex justify-between items-end text-sm sm:text-base mb-6">
             <div>
-              <p className="font-bold text-[#1A150D]">₹{raised.toLocaleString()}</p>
-              <p className="text-xs sm:text-sm text-gray-600">of ₹{goal.toLocaleString()}</p>
+              <p className="font-bold text-[#1A150D]">₹{raised.toLocaleString('en-IN')}</p>
+              <p className="text-xs sm:text-sm text-gray-600">of ₹{goal.toLocaleString('en-IN')}</p>
             </div>
             <div className="text-right">
               <p className="font-bold text-[#1A150D]">{donations}</p>
@@ -91,9 +104,13 @@ export default function CampaignCard({ id, image, title, description, raised, go
             </div>
           </div>
 
-          {/* Button — pass campaign id + title so Donate page knows which campaign this is */}
+          {/* Button */}
           <Link
-            to={`/donate?campaignId=${id}&campaignTitle=${encodeURIComponent(title)}`}
+            to={
+              id === 'sharang'
+                ? '/sharang'
+                : `/donate?campaignId=${id}&campaignTitle=${encodeURIComponent(title)}`
+            }
             className="w-full sm:w-auto px-8 py-3.5 text-center text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 text-sm tracking-wide bg-[#F99B2A] hover:bg-[#E07B0A] shadow-lg hover:shadow-xl block"
           >
             Donate Now
