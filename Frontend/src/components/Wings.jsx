@@ -34,12 +34,12 @@ const defaultCampaigns = [
   },
   {
     id: "sharang",
-    title: "Sharang Project",
-    description: "Environmental sustainability, green plantation drives, and health initiatives across communities.",
+    title: "Sharang 2026",
+    description: "A celebration that goes beyond the stage — bringing people together to support education and empowerment. Support underprivileged children in showcasing their talent.",
     wing: "EDUCATION_WING",
     imageUrl: "sharang",
     raised: 85000,
-    goal: 200000,
+    goal: 350000,
     donations: 30
   }
 ];
@@ -67,7 +67,19 @@ const Wings = () => {
       try {
         const data = await getCampaigns();
         if (data && Array.isArray(data) && data.length > 0) {
-          setCampaigns(data);
+          // Keep live synced target and education description for Sharang if backend serves old cached defaults
+          const sanitized = data.map((camp) => {
+            if (camp.id === "sharang" || camp.title?.toLowerCase().includes("sharang")) {
+              return {
+                ...camp,
+                title: "Sharang 2026",
+                goal: 350000,
+                description: "A celebration that goes beyond the stage — bringing people together to support education and empowerment. Support underprivileged children in showcasing their talent."
+              };
+            }
+            return camp;
+          });
+          setCampaigns(sanitized);
         } else {
           setCampaigns(defaultCampaigns);
         }
