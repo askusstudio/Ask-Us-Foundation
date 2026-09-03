@@ -14,29 +14,29 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080
 const defaultCampaigns = [
   {
     id: "empowered",
-    title: "EmpowerEd Literacy Drive",
-    description: "Supporting education, providing learning kits and school supplies for children.",
+    title: "Ask Us Kaksha – Shed & Furniture",
+    description: "This project aims to create a safe, comfortable, and dedicated learning space for children through the construction of a shed and provision of essential furniture. Your support will help us build a better environment for learning, creativity, and holistic development.",
     wing: "EDUCATION_WING",
     imageUrl: "empowerEd",
     raised: 42000,
-    goal: 100000,
-    donations: 18
+    goal: 150000,
+    donations: 24
   },
   {
     id: "revolutionaari",
-    title: "RevolutioNAARI Women Empowerment",
-    description: "Vocational skill training, health awareness and self-reliance workshops for rural women.",
+    title: "Revolutionनारी – Community Centre & Machinery",
+    description: "This project will establish a community centre and provide essential machinery to support skill development, livelihood opportunities, and economic independence for rural women. Your contribution will help create a sustainable space where women can learn, work, build skills, and grow together.",
     wing: "WOMEN_WING",
     imageUrl: "revolutionaari",
     raised: 65000,
-    goal: 150000,
+    goal: 1500000,
     donations: 24
   },
   {
     id: "sharang",
     title: "Sharang Project",
     description: "Environmental sustainability, green plantation drives, and health initiatives across communities.",
-    wing: "HEALTH_WING",
+    wing: "EDUCATION_WING",
     imageUrl: "sharang",
     raised: 85000,
     goal: 200000,
