@@ -11,8 +11,8 @@ import event3 from '../assets/image/sharang_event3.png';
 const SharangLanding = () => {
   const navigate = useNavigate();
 
-  // Matched exactly with Wings card figures
-  const targetAmount = 200000;
+// Matched with Sir's directive
+  const targetAmount = 350000;
   const currentRaised = 85000;
   const totalDonationsCount = 30;
   const progressPercent = Math.min(Math.round((currentRaised / targetAmount) * 100), 100);
