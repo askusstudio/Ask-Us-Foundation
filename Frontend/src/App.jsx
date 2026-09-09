@@ -12,6 +12,7 @@ import Donate from "./pages/Donate"
 import WingsDetail from "./pages/Wing"
 import ThankYou from "./pages/ThankYou"
 import SharangLanding from "./pages/SharangLanding"
+import LegalPolicy from "./pages/LegalPolicy"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/membership" element={<Membership />} />
         <Route path="/initiative" element={<Initiative />} />
+        <Route path="/initiatives" element={<Initiative />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
         <Route path="/impact" element={<Impact />} />
@@ -33,6 +35,17 @@ function App() {
         {/* Sharang 2026 Dedicated Landing Page Routes */}
         <Route path="/sharang" element={<SharangLanding />} />
         <Route path="/sharang-2026" element={<SharangLanding />} />
+
+        {/* Statutory Legal & Compliance Policy Routes */}
+        <Route path="/privacy-policy" element={<LegalPolicy />} />
+        <Route path="/privacy" element={<LegalPolicy />} />
+        <Route path="/terms" element={<LegalPolicy />} />
+        <Route path="/refund-policy" element={<LegalPolicy />} />
+        <Route path="/donation-policy" element={<LegalPolicy />} />
+        <Route path="/disclaimer" element={<LegalPolicy />} />
+        <Route path="/copyright" element={<LegalPolicy />} />
+        <Route path="/hyperlink" element={<LegalPolicy />} />
+        <Route path="/accessibility" element={<LegalPolicy />} />
       </Routes>
     </BrowserRouter>
   )
