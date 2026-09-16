@@ -8,34 +8,39 @@ import CTA from "../components/CTA";
 import { useState } from "react";
 import axios from "axios";
 
+// Environment variable se live URL uthayega, fallback me deployed backend URL
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
+
 export default function Membership() {
- const plans = [
-  {
-    name: "₹100 Registration Fee (One Time)",
-    amount: 100,
-    features: ["Monthly Newsletter", "Community Access", "Event Invitations"],
-  },
-  {
-    name: "₹100 / month",
-    amount: 100,
-    features: ["Monthly Newsletter", "Community Access", "Event Invitations"],
-  },
-  {
-    name: "₹500 / month",
-    amount: 500,
-    features: ["Everything in Basic", "Volunteer Priority", "Workshops & Training"],
-  },
-  {
-    name: "₹1000 / month",
-    amount: 1000,
-    features: ["Everything in Standard", "Leadership Programs", "Recognition Certificate"],
-  },
-  {
-    name: "₹5000 / month",
-    amount: 5000,
-    features: ["Everything in Premium", "Special Impact Events", "VIP Recognition"],
-  },
-];
+  const plans = [
+    {
+      name: "₹100 Registration Fee (One Time)",
+      amount: 100,
+      features: ["Monthly Newsletter", "Community Access", "Event Invitations"],
+    },
+    {
+      name: "₹100 / month",
+      amount: 100,
+      features: ["Monthly Newsletter", "Community Access", "Event Invitations"],
+    },
+    {
+      name: "₹500 / month",
+      amount: 500,
+      features: ["Everything in Basic", "Volunteer Priority", "Workshops & Training"],
+    },
+    {
+      name: "₹1000 / month",
+      amount: 1000,
+      features: ["Everything in Standard", "Leadership Programs", "Recognition Certificate"],
+    },
+    {
+      name: "₹5000 / month",
+      amount: 5000,
+      features: ["Everything in Premium", "Special Impact Events", "VIP Recognition"],
+    },
+  ];
 
   const benefits = [
     {
@@ -63,6 +68,7 @@ export default function Membership() {
         "Promote environmental awareness and sustainable living.",
     },
   ];
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -73,23 +79,19 @@ export default function Membership() {
   const type = "Membership";
 
   const handleMembershipChange = (e) => {
-    console.log(e.target.value)
     const selectedName = e.target.value;
     setMembership(selectedName);
     const selected = plans.find((p) => p.name === selectedName);
     if (selected) setAmount(selected.amount);
   };
 
-
   const handleDonate = async () => {
-
-    // Validation
     if (!fullName || !email) {
       alert("Please enter your name and email!");
       return;
     }
 
-    const finalAmount = amount
+    const finalAmount = amount;
     if (!finalAmount || finalAmount <= 0) {
       alert("Please select or enter a valid amount!");
       return;
@@ -98,15 +100,14 @@ export default function Membership() {
     setIsLoading(true);
 
     try {
-      // Spring Boot ko donor info bhejo
-      const response = await axios.post("http://localhost:8080/razorpay/membership/create-order", {
+      // Dynamic live backend API call for order creation
+      const response = await axios.post(`${API_BASE_URL}/razorpay/membership/create-order`, {
         amount: parseInt(finalAmount),
         type,
         fullName,
         email,
         phone,
         message,
-
       });
 
       const order = response.data;
@@ -119,36 +120,46 @@ export default function Membership() {
         description: "Membership - " + membership,
         order_id: order.id,
 
-        // Prefill — form se jo bhara wo auto fill hoga
         prefill: {
           name: fullName,
           email: email,
-          contact: phone
+          contact: phone,
         },
 
         handler: async function (paymentResponse) {
-          const verifyRes = await axios.post("http://localhost:8080/razorpay/payment/verify", {
-            razorpay_payment_id: paymentResponse.razorpay_payment_id,
-            razorpay_order_id: paymentResponse.razorpay_order_id,
-            razorpay_signature: paymentResponse.razorpay_signature,
-          });
+          try {
+            // Dynamic live backend API call for payment verification
+            const verifyRes = await axios.post(`${API_BASE_URL}/razorpay/payment/verify`, {
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+            });
 
-          if (verifyRes.data.status === "success") {
-            alert("Thank you " + fullName + "! for becoming a member!");
-          } else {
-            alert("Payment issue! Contact: askusfoundation.lko@gmail.com\nPayment ID: " + paymentResponse.razorpay_payment_id);
+            if (verifyRes.data.status === "success") {
+              alert("Thank you " + fullName + "! for becoming a member!");
+            } else {
+              alert(
+                "Payment issue! Contact: support@instask.in\nPayment ID: " +
+                  paymentResponse.razorpay_payment_id
+              );
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Verification issue. Please contact support@instask.in with your payment ID.");
           }
         },
 
-        theme: { color: "#F99B2A" }  // tumhara brand color!
+        theme: { color: "#F99B2A" },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-
     } catch (error) {
-      alert("Something went wrong, Please Try Again");
-      console.log(error)
+      console.error("Membership Payment Initiation Error:", error);
+      alert(
+        error?.response?.data?.message ||
+          "Payment gateway connection failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -316,10 +327,11 @@ export default function Membership() {
               />
 
               <select
-              value={membership}
-              onChange={handleMembershipChange}
-               className="w-full border border-gray-200 rounded-xl px-4 py-3.5 md:px-5 md:py-4 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all bg-[#FBF9F3] text-gray-600">
-                <option>Select Membership</option>
+                value={membership}
+                onChange={handleMembershipChange}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3.5 md:px-5 md:py-4 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all bg-[#FBF9F3] text-gray-600"
+              >
+                <option value="">Select Membership</option>
                 {plans.map((plan) => (
                   <option key={plan.name} value={plan.name}>
                     {plan.name}
@@ -338,10 +350,10 @@ export default function Membership() {
               <button
                 type="button"
                 onClick={handleDonate}
-                disabled = {isLoading}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 py-4 rounded-xl font-bold text-gray-900 transition-colors shadow-md mt-2"
+                disabled={isLoading}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 py-4 rounded-xl font-bold text-gray-900 transition-colors shadow-md mt-2 cursor-pointer disabled:opacity-50"
               >
-                 {isLoading ? "Processing..." : "Enroll Now"}
+                {isLoading ? "Processing..." : "Enroll Now"}
               </button>
             </form>
           </div>
