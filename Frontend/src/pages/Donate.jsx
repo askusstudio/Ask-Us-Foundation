@@ -6,7 +6,9 @@ import { FaHeart, FaLock, FaShieldAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
 
 const Donate = () => {
   const [searchParams] = useSearchParams();
@@ -51,8 +53,8 @@ const Donate = () => {
       return;
     }
 
-    const finalAmount = amount === 'custom' ? customAmount : amount;
-    if (!finalAmount || Number(finalAmount) <= 0) {
+    const finalAmount = Number(amount === 'custom' ? customAmount : amount);
+    if (!finalAmount || finalAmount <= 0) {
       alert("Please enter a valid donation amount (minimum ₹1)!");
       return;
     }
@@ -61,7 +63,7 @@ const Donate = () => {
 
     try {
       const response = await axios.post(`${API_BASE_URL}/razorpay/donation/create-order`, {
-        amount: parseInt(finalAmount, 10),
+        amount: finalAmount,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         email: email.trim(),
@@ -72,14 +74,21 @@ const Donate = () => {
       });
 
       const order = response.data;
+      console.log("Donation Order response:", order);
+
+      // Agar backend se amount 100 paise (₹1) aaya ho toh donor ke select kiye amount ko use karein
+      const calculatedAmount =
+        order.amount && order.amount > 100
+          ? order.amount
+          : finalAmount * 100;
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_dummy",
-        amount: order.amount,
-        currency: order.currency,
+        amount: calculatedAmount,
+        currency: order.currency || "INR",
         name: "Askus Foundation",
         description: campaignTitle || `${wing.replace('_', ' ')} Donation`,
-        order_id: order.id,
+        order_id: order.id || order.orderId,
 
         prefill: {
           name: `${firstName} ${lastName}`.trim(),
@@ -89,20 +98,20 @@ const Donate = () => {
 
         handler: async function (paymentResponse) {
           setIsLoading(true);
-          
+
           const onSuccessNavigate = () => {
-             navigate('/thank-you', {
-                state: {
-                  fullName: `${firstName} ${lastName}`.trim(),
-                  amount: finalAmount,
-                  date: new Date().toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
-                  }),
-                  paymentId: paymentResponse.razorpay_payment_id,
-                },
-              });
+            navigate('/thank-you', {
+              state: {
+                fullName: `${firstName} ${lastName}`.trim(),
+                amount: finalAmount,
+                date: new Date().toLocaleDateString('en-IN', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                }),
+                paymentId: paymentResponse.razorpay_payment_id,
+              },
+            });
           };
 
           try {
@@ -123,7 +132,7 @@ const Donate = () => {
         modal: {
           ondismiss: function () {
             setIsLoading(false);
-          }
+          },
         },
 
         theme: { color: "#F99B2A" },
@@ -132,7 +141,6 @@ const Donate = () => {
       const rzp = new window.Razorpay(options);
       setIsLoading(false);
       rzp.open();
-
     } catch (error) {
       alert("Something went wrong, Please Try Again");
       console.error(error);
@@ -145,7 +153,6 @@ const Donate = () => {
       <Navbar />
 
       <main className="flex-grow pb-24">
-
         {/* HERO SECTION */}
         <div className="bg-[#1A150D] py-16 md:py-24 px-4 text-center">
           <div className="max-w-3xl mx-auto">
@@ -163,7 +170,6 @@ const Donate = () => {
         {/* DONATION SECTION */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-
             {/* LEFT: DONATION FORM */}
             <div className="lg:col-span-3 bg-white rounded-3xl shadow-xl p-6 md:p-10 border border-gray-100">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">Choose Your Donation</h2>
@@ -176,10 +182,11 @@ const Donate = () => {
                       key={item.value}
                       type="button"
                       onClick={() => handleAmountSelect(item.value)}
-                      className={`py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 
-                        ${amount === item.value
-                          ? 'bg-[#F99B2A] text-white border-[#F99B2A] shadow-md transform -translate-y-1'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-[#F99B2A] hover:text-[#F99B2A]'
+                      className={`py-4 rounded-2xl font-bold text-lg transition-all duration-300 border-2 cursor-pointer 
+                        ${
+                          amount === item.value
+                            ? 'bg-[#F99B2A] text-white border-[#F99B2A] shadow-md transform -translate-y-1'
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-[#F99B2A] hover:text-[#F99B2A]'
                         }`}
                     >
                       {item.label}
@@ -206,7 +213,7 @@ const Donate = () => {
                   <FaHeart className="text-[#F99B2A] mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-700 font-medium">
                     {amount !== 'custom'
-                      ? predefinedAmounts.find(a => a.value === amount)?.impact
+                      ? predefinedAmounts.find((a) => a.value === amount)?.impact
                       : 'Every rupee counts! Your custom donation will be utilized where it is needed the most.'}
                   </p>
                 </div>
@@ -298,19 +305,17 @@ const Donate = () => {
                   </div>
                   <div>
                     <strong className="block text-white mb-1">How can I contact support?</strong>
-                    <p>You can reach us directly at <a href="mailto:askusfoundation.lko@gmail.com" className="text-[#F99B2A] hover:underline">askusfoundation.lko@gmail.com</a> or call us at +91 94514 81141.</p>
+                    <p>You can reach us directly at <a href="mailto:support@instask.in" className="text-[#F99B2A] hover:underline">support@instask.in</a> or call us at +91 8009227002.</p>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* DONATION SECTION LEADERBOARD */}
           <div className="mt-14">
             <Leaderboard />
           </div>
-
         </div>
       </main>
 
@@ -328,7 +333,7 @@ const Donate = () => {
             <button
               type="button"
               onClick={() => setIsLoading(false)}
-              className="w-full py-3 text-sm text-[#7A4B1A] font-semibold border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+              className="w-full py-3 text-sm text-[#7A4B1A] font-semibold border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
             >
               Cancel
             </button>
