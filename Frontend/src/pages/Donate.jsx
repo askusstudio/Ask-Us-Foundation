@@ -17,8 +17,9 @@ const Donate = () => {
   const campaignId = searchParams.get('campaignId');
   const campaignTitle = searchParams.get('campaignTitle');
   const wing = searchParams.get('wing') || 'WOMEN_WING';
+  const paramAmount = searchParams.get('amount');
 
-  const [amount, setAmount] = useState('1000');
+  const [amount, setAmount] = useState(paramAmount || '1000');
   const [customAmount, setCustomAmount] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -53,7 +54,9 @@ const Donate = () => {
       return;
     }
 
-    const finalAmount = Number(amount === 'custom' ? customAmount : amount);
+    const currentVal = amount === 'custom' ? customAmount : amount;
+    const finalAmount = Number(currentVal);
+
     if (!finalAmount || finalAmount <= 0) {
       alert("Please enter a valid donation amount (minimum ₹1)!");
       return;
@@ -62,33 +65,33 @@ const Donate = () => {
     setIsLoading(true);
 
     try {
+      // String campaignId ('sharang-2026') backend ko crash na kare isliye check:
+      const isNumericCampaignId = campaignId && !isNaN(campaignId);
+
       const response = await axios.post(`${API_BASE_URL}/razorpay/donation/create-order`, {
         amount: finalAmount,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         email: email.trim(),
         phone: phone.trim(),
-        wing,
-        hideFromLeaderboard,
-        campaignId: campaignId || null,
+        wing: wing || "EDUCATION_WING",
+        hideFromLeaderboard: Boolean(hideFromLeaderboard),
+        campaignId: isNumericCampaignId ? parseInt(campaignId, 10) : null,
       });
 
       const order = response.data;
       console.log("Donation Order response:", order);
 
-      // Agar backend se amount 100 paise (₹1) aaya ho toh donor ke select kiye amount ko use karein
-      const calculatedAmount =
-        order.amount && order.amount > 100
-          ? order.amount
-          : finalAmount * 100;
+      // User ka exact selected amount rupees se paise me:
+      const exactPaiseAmount = Math.round(finalAmount * 100);
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_dummy",
-        amount: calculatedAmount,
-        currency: order.currency || "INR",
+        amount: exactPaiseAmount, // Explicitly user entered/selected amount in paise
+        currency: order?.currency || "INR",
         name: "Askus Foundation",
-        description: campaignTitle || `${wing.replace('_', ' ')} Donation`,
-        order_id: order.id || order.orderId,
+        description: campaignTitle || `${wing ? wing.replace('_', ' ') : 'Foundation'} Donation`,
+        order_id: order?.id || order?.orderId,
 
         prefill: {
           name: `${firstName} ${lastName}`.trim(),
@@ -122,7 +125,7 @@ const Donate = () => {
             });
             onSuccessNavigate();
           } catch (err) {
-            console.warn("Backend verification failed but payment captured by Razorpay:", err);
+            console.warn("Backend verification note:", err);
             onSuccessNavigate();
           } finally {
             setIsLoading(false);
@@ -142,8 +145,8 @@ const Donate = () => {
       setIsLoading(false);
       rzp.open();
     } catch (error) {
-      alert("Something went wrong, Please Try Again");
-      console.error(error);
+      console.error("Donation gateway error:", error);
+      alert(error?.response?.data?.message || "Something went wrong, Please Try Again");
       setIsLoading(false);
     }
   };
@@ -275,7 +278,9 @@ const Donate = () => {
                 disabled={isLoading}
                 className="w-full bg-[#F99B2A] hover:bg-[#E07B0A] text-white font-bold text-lg py-5 rounded-2xl transition-all duration-300 shadow-[0_8px_30px_rgb(249,155,42,0.3)] hover:shadow-[0_8px_30px_rgb(249,155,42,0.5)] transform hover:-translate-y-1 disabled:opacity-50 cursor-pointer"
               >
-                {isLoading ? "Processing..." : `Donate ${amount === 'custom' ? (customAmount ? `₹${customAmount}` : '') : `₹${amount}`} Now`}
+                {isLoading
+                  ? "Processing..."
+                  : `Donate ₹${amount === 'custom' ? (customAmount || 0) : amount} Now`}
               </button>
 
               <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500">
