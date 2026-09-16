@@ -11,14 +11,14 @@ import event3 from '../assets/image/sharang_event3.png';
 const SharangLanding = () => {
   const navigate = useNavigate();
 
-// Matched with Sir's directive
   const targetAmount = 350000;
   const currentRaised = 85000;
   const totalDonationsCount = 30;
   const progressPercent = Math.min(Math.round((currentRaised / targetAmount) * 100), 100);
 
   const handleDonateRedirect = (suggestedAmount) => {
-    navigate(`/donate?campaignId=sharang-2026&campaignTitle=Sharang%202026&wing=EDUCATION_WING`);
+    const amtQuery = suggestedAmount ? `&amount=${suggestedAmount}` : '';
+    navigate(`/donate?campaignId=sharang-2026&campaignTitle=Sharang%202026&wing=EDUCATION_WING${amtQuery}`);
   };
 
   const handleShare = async () => {
