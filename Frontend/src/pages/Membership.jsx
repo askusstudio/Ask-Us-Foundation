@@ -8,7 +8,6 @@ import CTA from "../components/CTA";
 import { useState } from "react";
 import axios from "axios";
 
-// Environment variable se live URL uthayega, fallback me deployed backend URL
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
@@ -91,7 +90,7 @@ export default function Membership() {
       return;
     }
 
-    const finalAmount = amount;
+    const finalAmount = Number(amount);
     if (!finalAmount || finalAmount <= 0) {
       alert("Please select or enter a valid amount!");
       return;
@@ -100,25 +99,32 @@ export default function Membership() {
     setIsLoading(true);
 
     try {
-      // Dynamic live backend API call for order creation
+      // Backend ko clear amount (in Rupees) aur plan details bhejein
       const response = await axios.post(`${API_BASE_URL}/razorpay/membership/create-order`, {
-        amount: parseInt(finalAmount),
+        amount: finalAmount,
         type,
         fullName,
         email,
         phone,
         message,
+        planName: membership,
       });
 
       const order = response.data;
+      console.log("Order Response from Server:", order);
+
+      // Agar backend se amount paise me nahi aaya ya 100 hardcode hai, toh fallback calculation
+      const calculatedAmount = order.amount && order.amount > 100 
+        ? order.amount 
+        : finalAmount * 100;
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY,
-        amount: order.amount,
-        currency: order.currency,
-        name: "Askus Foundation",
-        description: "Membership - " + membership,
-        order_id: order.id,
+        amount: calculatedAmount,
+        currency: order.currency || "INR",
+        name: "AskUs Foundation",
+        description: `Membership - ${membership || "Contribution"}`,
+        order_id: order.id || order.orderId,
 
         prefill: {
           name: fullName,
@@ -128,18 +134,17 @@ export default function Membership() {
 
         handler: async function (paymentResponse) {
           try {
-            // Dynamic live backend API call for payment verification
             const verifyRes = await axios.post(`${API_BASE_URL}/razorpay/payment/verify`, {
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_order_id: paymentResponse.razorpay_order_id,
               razorpay_signature: paymentResponse.razorpay_signature,
             });
 
-            if (verifyRes.data.status === "success") {
-              alert("Thank you " + fullName + "! for becoming a member!");
+            if (verifyRes.data.status === "success" || verifyRes.data === "success") {
+              alert(`Thank you ${fullName}! for becoming an AskUs member!`);
             } else {
               alert(
-                "Payment issue! Contact: support@instask.in\nPayment ID: " +
+                "Payment verification pending. Contact: support@instask.in\nPayment ID: " +
                   paymentResponse.razorpay_payment_id
               );
             }
