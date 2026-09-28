@@ -78,9 +78,8 @@ export default function CampaignCard({ id, image, title, description, raised, go
           )}
         </div>
 
-        {/* Progress Section (Pushed to the bottom using mt-auto) */}
+        {/* Progress Section */}
         <div className="mt-auto">
-
           {/* Progress Bar */}
           <div className="w-full bg-gray-300/60 rounded-full h-2 sm:h-2.5 mb-3 overflow-hidden">
             <motion.div
@@ -104,13 +103,9 @@ export default function CampaignCard({ id, image, title, description, raised, go
             </div>
           </div>
 
-          {/* Button */}
+          {/* Standardized Button Link without Sharang branch */}
           <Link
-            to={
-              id === 'sharang'
-                ? '/sharang'
-                : `/donate?campaignId=${id}&campaignTitle=${encodeURIComponent(title)}`
-            }
+            to={`/donate?campaignId=${id}&campaignTitle=${encodeURIComponent(title)}`}
             className="w-full sm:w-auto px-8 py-3.5 text-center text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 text-sm tracking-wide bg-[#F99B2A] hover:bg-[#E07B0A] shadow-lg hover:shadow-xl block"
           >
             Donate Now

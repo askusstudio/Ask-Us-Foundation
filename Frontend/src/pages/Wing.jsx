@@ -6,7 +6,9 @@ import Footer from "../components/Footer";
 import axios from "axios";
 import { FaTrophy, FaMedal, FaHeart, FaUsers, FaRupeeSign } from "react-icons/fa";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
 
 const WingsDetail = () => {
   const { title } = useParams();
@@ -18,12 +20,11 @@ const WingsDetail = () => {
   );
 
   const wingKey = wing ? wing.title.toUpperCase().replace(/\s+/g, '_') : "GENERAL";
-  const isEducationWing = wingKey.includes("EDUCATION");
 
   const [leaderboard, setLeaderboard] = useState([]);
   const [stats, setStats] = useState({
-    totalDonors: isEducationWing ? 30 : 0,
-    totalAmount: isEducationWing ? 85000 : 0,
+    totalDonors: 0,
+    totalAmount: 0,
   });
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
 
@@ -45,8 +46,8 @@ const WingsDetail = () => {
         const donors = Number(apiStats.totalDonors) || 0;
 
         setStats({
-          totalAmount: isEducationWing && amount === 0 ? 85000 : amount,
-          totalDonors: isEducationWing && donors === 0 ? 30 : donors,
+          totalAmount: amount,
+          totalDonors: donors,
         });
       } catch (error) {
         console.error("Failed to load wing leaderboard/stats:", error);
@@ -56,7 +57,7 @@ const WingsDetail = () => {
     };
 
     fetchWingData();
-  }, [wingKey, wing, isEducationWing]);
+  }, [wingKey, wing]);
 
   if (!wing) {
     return (
@@ -68,9 +69,8 @@ const WingsDetail = () => {
     );
   }
 
-  const donateHref = isEducationWing
-    ? `/donate?campaignId=sharang-2026&campaignTitle=Sharang%202026&wing=EDUCATION_WING`
-    : `/donate?wing=${wingKey}&campaignTitle=${encodeURIComponent(wing.title)}`;
+  // Standard direct wing donation link without campaign slug overrides
+  const donateHref = `/donate?wing=${wingKey}&campaignTitle=${encodeURIComponent(wing.title)}`;
 
   return (
     <div className="font-sans min-h-screen bg-white overflow-x-hidden flex flex-col">

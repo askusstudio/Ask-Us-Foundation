@@ -151,7 +151,7 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Audit & Visitor Stats (Formatted in Lacs as per Sir's request) */}
+            {/* Audit & Visitor Stats */}
             <div className="text-xs space-y-1 bg-[#13171B]/60 p-3 rounded-lg border border-gray-800">
               <p className="text-gray-400 text-[11px]">
                 <strong className="text-gray-200">Last updated on:</strong> September 8, 2026
@@ -312,21 +312,24 @@ export default function Footer() {
                   Wings & Campaigns
                 </strong>
                 <ul className="space-y-1.5">
-                  <li><Link to="/sharang" className="hover:text-amber-400 transition-colors">Sharang 2026</Link></li>
                   <li><Link to="/wing/Education%20Wing" className="hover:text-amber-400 transition-colors">Education Wing</Link></li>
                   <li><Link to="/wing/Women%20Wing" className="hover:text-amber-400 transition-colors">Women Wing</Link></li>
+                  <li><Link to="/projects" className="hover:text-amber-400 transition-colors">Community Projects</Link></li>
                   <li><Link to="/donate" className="hover:text-amber-400 transition-colors">Donate Online</Link></li>
                 </ul>
               </div>
 
               <div>
                 <strong className="text-white block mb-2 font-bold uppercase text-[11px] tracking-wider">
-                  Support & Help
+                  Support & Policies
                 </strong>
                 <ul className="space-y-1.5">
                   <li><a href="tel:+919451481141" className="hover:text-amber-400 transition-colors">Help Desk</a></li>
+                  <li><Link to="/contact" className="hover:text-amber-400 transition-colors">Contact Us</Link></li>
                   <li><Link to="/privacy-policy" className="hover:text-amber-400 transition-colors">Privacy Policy</Link></li>
                   <li><Link to="/terms" className="hover:text-amber-400 transition-colors">Terms & Conditions</Link></li>
+                  <li><Link to="/refund-policy" className="hover:text-amber-400 transition-colors">Refund Policy</Link></li>
+                  <li><Link to="/shipping-policy" className="hover:text-amber-400 transition-colors">Shipping & Delivery</Link></li>
                 </ul>
               </div>
             </div>
@@ -334,7 +337,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Middle Links Strip */}
+      {/* Middle Links Strip (All Active Compliance Routes) */}
       <div className="bg-[#14171A] border-t border-b border-gray-800 py-3 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-center items-center gap-x-4 gap-y-1.5 text-[11px] text-gray-400">
           <Link to="/copyright" className="hover:text-white transition-colors">Copyright Policy</Link>
@@ -342,6 +345,12 @@ export default function Footer() {
           <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
           <span>|</span>
           <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <span>|</span>
+          <Link to="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+          <span>|</span>
+          <Link to="/shipping-policy" className="hover:text-white transition-colors">Shipping & Delivery</Link>
+          <span>|</span>
+          <Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link>
           <span>|</span>
           <Link to="/hyperlink" className="hover:text-white transition-colors">Hyperlinking Policy</Link>
           <span>|</span>

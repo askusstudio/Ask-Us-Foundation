@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaTrophy, FaMedal, FaHeart, FaUserSecret } from 'react-icons/fa';
 
 const Leaderboard = () => {
@@ -7,7 +7,7 @@ const Leaderboard = () => {
     { id: 1, name: 'Ananya Pandey', amount: 25000, wing: 'Education Wing', date: 'Aug 2026', anonymous: false },
     { id: 2, name: 'Vikramaditya S.', amount: 15000, wing: 'Environment Wing', date: 'Aug 2026', anonymous: false },
     { id: 3, name: 'Rohan Sharma', amount: 10000, wing: 'Health Wing', date: 'Aug 2026', anonymous: false },
-    { id: 4, name: 'Anonymous Hero', amount: 7500, wing: 'Sharang 2026', date: 'Aug 2026', anonymous: true },
+    { id: 4, name: 'Anonymous Hero', amount: 7500, wing: 'Education Wing', date: 'Aug 2026', anonymous: true },
     { id: 5, name: 'Pooja Verma', amount: 5000, wing: 'Animal Care', date: 'Aug 2026', anonymous: false },
   ]);
 

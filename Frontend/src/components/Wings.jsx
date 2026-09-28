@@ -7,9 +7,10 @@ import revolutionaari2 from "../assets/image/revolutionaari2.jpg";
 import revolutionaari3 from "../assets/image/revolutionaari3.jpg";
 import CampaignCard from "../components/CampaignCard";
 import green from "../assets/image/green.jpg";
-import sharang from "../assets/image/sharang.png";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
 
 const defaultCampaigns = [
   {
@@ -33,14 +34,14 @@ const defaultCampaigns = [
     donations: 24
   },
   {
-    id: "sharang",
-    title: "Sharang 2026",
-    description: "A celebration that goes beyond the stage — bringing people together to support education and empowerment. Support underprivileged children in showcasing their talent.",
-    wing: "EDUCATION_WING",
-    imageUrl: "sharang",
-    raised: 85000,
-    goal: 350000,
-    donations: 30
+    id: "green-squad",
+    title: "Green Squad – Community Plantation & Cleanliness",
+    description: "Driving active environmental protection and climate resilience through large-scale tree plantations, public cleanliness awareness drives, and sustainable waste segregation in local neighborhoods.",
+    wing: "ENVIRONMENT_WING",
+    imageUrl: "green",
+    raised: 38000,
+    goal: 200000,
+    donations: 19
   }
 ];
 
@@ -56,7 +57,7 @@ const Wings = () => {
   const campaignImages = {
     empowerEd: [empowerEd, empowerEd2, empowerEd3],
     revolutionaari: [revolutionaari, revolutionaari2, revolutionaari3],
-    sharang: sharang || green,
+    green: green,
   };
 
   const [campaigns, setCampaigns] = useState([]);
@@ -67,19 +68,11 @@ const Wings = () => {
       try {
         const data = await getCampaigns();
         if (data && Array.isArray(data) && data.length > 0) {
-          // Keep live synced target and education description for Sharang if backend serves old cached defaults
-          const sanitized = data.map((camp) => {
-            if (camp.id === "sharang" || camp.title?.toLowerCase().includes("sharang")) {
-              return {
-                ...camp,
-                title: "Sharang 2026",
-                goal: 350000,
-                description: "A celebration that goes beyond the stage — bringing people together to support education and empowerment. Support underprivileged children in showcasing their talent."
-              };
-            }
-            return camp;
-          });
-          setCampaigns(sanitized);
+          // Filter out concluded Sharang event if backend still sends it
+          const activeCampaigns = data.filter(
+            (camp) => camp.id !== "sharang" && !camp.title?.toLowerCase().includes("sharang")
+          );
+          setCampaigns(activeCampaigns.length > 0 ? activeCampaigns : defaultCampaigns);
         } else {
           setCampaigns(defaultCampaigns);
         }

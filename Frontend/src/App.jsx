@@ -7,11 +7,10 @@ import Projects from "./pages/Project"
 import ProjectDetail from "./pages/ProjectDetail"
 import Impact from "./pages/Impact"
 import GalleryPage from "./pages/GalleryPage"
-import ScrollToTop from './components/ScrollToTop';
+import ScrollToTop from './components/ScrollToTop'
 import Donate from "./pages/Donate"
 import WingsDetail from "./pages/Wing"
 import ThankYou from "./pages/ThankYou"
-import SharangLanding from "./pages/SharangLanding"
 import LegalPolicy from "./pages/LegalPolicy"
 
 function App() {
@@ -22,8 +21,17 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/membership" element={<Membership />} />
+        
+        {/* Initiatives Routes */}
         <Route path="/initiative" element={<Initiative />} />
         <Route path="/initiatives" element={<Initiative />} />
+        <Route path="/revolutionaari" element={<Initiative />} />
+        <Route path="/empowered" element={<Initiative />} />
+        <Route path="/pawer-rangers" element={<Initiative />} />
+        <Route path="/green-squad" element={<Initiative />} />
+        <Route path="/little-legends" element={<Initiative />} />
+
+        {/* Projects, Impact & Donate */}
         <Route path="/projects" element={<Projects />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
         <Route path="/impact" element={<Impact />} />
@@ -31,21 +39,26 @@ function App() {
         <Route path="/donate" element={<Donate />} />
         <Route path="/wing/:title" element={<WingsDetail />} />
         <Route path="/thank-you" element={<ThankYou />} />
-        
-        {/* Sharang 2026 Dedicated Landing Page Routes */}
-        <Route path="/sharang" element={<SharangLanding />} />
-        <Route path="/sharang-2026" element={<SharangLanding />} />
 
-        {/* Statutory Legal & Compliance Policy Routes */}
+        {/* Legal & Compliance Routes (PhonePe / Gateway Mandatory) */}
         <Route path="/privacy-policy" element={<LegalPolicy />} />
         <Route path="/privacy" element={<LegalPolicy />} />
         <Route path="/terms" element={<LegalPolicy />} />
+        <Route path="/terms-and-conditions" element={<LegalPolicy />} />
         <Route path="/refund-policy" element={<LegalPolicy />} />
         <Route path="/donation-policy" element={<LegalPolicy />} />
+        <Route path="/shipping-policy" element={<LegalPolicy />} />
+        <Route path="/contact" element={<LegalPolicy />} />
+        <Route path="/help" element={<LegalPolicy />} />
         <Route path="/disclaimer" element={<LegalPolicy />} />
         <Route path="/copyright" element={<LegalPolicy />} />
         <Route path="/hyperlink" element={<LegalPolicy />} />
         <Route path="/accessibility" element={<LegalPolicy />} />
+        <Route path="/cyber-security" element={<LegalPolicy />} />
+        <Route path="/screen-reader" element={<LegalPolicy />} />
+
+        {/* Catch-all fallback */}
+        <Route path="*" element={<Home />} />
       </Routes>
     </BrowserRouter>
   )
