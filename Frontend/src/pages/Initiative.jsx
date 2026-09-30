@@ -1,19 +1,19 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { FaArrowRight } from "react-icons/fa";
-import hero from "../assets/image/initiative.jpg";
-import revolutionaari from "../assets/image/revolutionaari.jpg"
-import empowerEd from "../assets/image/empowerEd.jpg"
-import pawerRanger from "../assets/image/pawerRanger.jpg"
-import littleLegend from "../assets/image/littleLegend.png"
-import greenSquad from "../assets/image/green.jpg"
+import hero from "../assets/image/empowerEd.jpg"; // Working community photo
+import revolutionaari from "../assets/image/revolutionaari.jpg";
+import empowerEd from "../assets/image/empowerEd.jpg";
+import pawerRanger from "../assets/image/pawerRanger.jpg";
+import littleLegend from "../assets/image/littleLegend.png";
+import greenSquad from "../assets/image/green.jpg";
 import CTA from "../components/CTA";
 import { Link } from "react-router-dom";
 
 const initiatives = [
   {
     title: "Revolutioनारी",
-    href:"/wing/Revolutioनारी",
+    href: "/wing/Revolutioनारी",
     subtitle: "Empowering Rural Women Through Skills & Financial Literacy",
     description:
       "Revolutioनारी is dedicated to empowering rural women by providing skill development training, financial literacy, and opportunities for economic independence. We help women build confidence, achieve self-reliance, and create a brighter future for themselves and their communities.",
@@ -22,7 +22,7 @@ const initiatives = [
   },
   {
     title: "EmpowerEd",
-    href:"/wing/empowered",
+    href: "/wing/EmpowerEd",
     subtitle: "Shaping Young Minds Through Education & Personality Development",
     description:
       "EmpowerEd focuses on providing quality education, mentorship, and personality development programs for children and youth. Through holistic learning and life skills training, we inspire young individuals to unlock their potential and become future leaders.",
@@ -31,7 +31,7 @@ const initiatives = [
   },
   {
     title: "Pawer Rangers",
-    href:"/wing/pawerrangers",
+    href: "/wing/PAWerRangers",
     subtitle: "Protecting and Caring for Street Animals",
     description:
       "Pawer Rangers is committed to the welfare of street animals through rescue operations, feeding drives, and medical support. Our mission is to create a compassionate society where every animal is treated with care, dignity, and love.",
@@ -40,7 +40,7 @@ const initiatives = [
   },
   {
     title: "Green Squad",
-    href:"/wing/greensquad",
+    href: "/wing/GreenSquad",
     subtitle: "Working Together for a Greener India",
     description:
       "Green Squad promotes environmental sustainability through tree plantation drives, awareness campaigns, and community-led green initiatives. We aim to inspire people across India to take action for a cleaner, healthier, and greener future.",
@@ -49,7 +49,7 @@ const initiatives = [
   },
   {
     title: "Little Legends",
-    href:"/wing/empowered",
+    href: "/wing/EmpowerEd",
     subtitle: "Nurturing Young Dreams Through Education & Personal Growth",
     description:
       "Little Legends is dedicated to fostering education, creativity, and personality development among children. Through engaging learning experiences and mentorship, we empower young minds to dream big, grow confidently, and become responsible citizens.",
@@ -64,14 +64,14 @@ export default function Initiatives() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[100svh] flex items-center bg-black pt-20 pb-16">
+      <section className="relative min-h-[100svh] flex items-center bg-black pt-20 pb-16 overflow-hidden">
         <img
-          src= {hero}
+          src={hero}
           alt="Initiatives Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover opacity-35"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-white w-full text-center md:text-left mt-10 md:mt-0">
           <p className="uppercase tracking-[0.2em] md:tracking-[0.3em] text-[#F99B2A] mb-4 md:mb-6 text-sm md:text-base font-bold">
@@ -86,7 +86,7 @@ export default function Initiatives() {
             At A Time
           </h1>
 
-          <p className="mt-6 md:mt-8 text-base md:text-lg text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+          <p className="mt-6 md:mt-8 text-base md:text-lg text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed font-light">
             Through education, women empowerment, animal welfare,
             and environmental action, AskUs Foundation is creating
             lasting change across communities.
@@ -128,7 +128,7 @@ export default function Initiatives() {
             }`}
           >
             {/* IMAGE */}
-            <div className="overflow-hidden rounded-2xl md:rounded-[32px] w-full">
+            <div className="overflow-hidden rounded-2xl md:rounded-[32px] w-full shadow-lg">
               <img
                 src={item.image}
                 alt={item.title}
@@ -154,7 +154,10 @@ export default function Initiatives() {
                 {item.description}
               </p>
 
-              <Link to = {item.href} className="mt-8 md:mt-10 inline-flex items-center gap-3 bg-[#F99B2A] text-white px-6 md:px-8 py-3.5 md:py-4 rounded-full font-semibold hover:bg-[#E07B0A] hover:scale-105 transition-all duration-300">
+              <Link
+                to={item.href}
+                className="mt-8 md:mt-10 inline-flex items-center gap-3 bg-[#F99B2A] text-white px-6 md:px-8 py-3.5 md:py-4 rounded-full font-semibold hover:bg-[#E07B0A] hover:scale-105 transition-all duration-300"
+              >
                 Learn More
                 <FaArrowRight className="text-sm md:text-base" />
               </Link>
