@@ -13,6 +13,10 @@ import WingsDetail from "./pages/Wing"
 import ThankYou from "./pages/ThankYou"
 import LegalPolicy from "./pages/LegalPolicy"
 
+// New Pages
+import SharangMemory from "./pages/SharangMemory"
+import CelebrateBirthday from "./pages/CelebrateBirthday"
+
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +35,15 @@ function App() {
         <Route path="/green-squad" element={<Initiative />} />
         <Route path="/little-legends" element={<Initiative />} />
 
+        {/* Sharang 2026 Digital Memory Card Routes */}
+        <Route path="/sharang" element={<SharangMemory />} />
+        <Route path="/sharang-2026" element={<SharangMemory />} />
+        <Route path="/sharang-memories" element={<SharangMemory />} />
+
+        {/* Celebrate Your Birthday Campaign Routes */}
+        <Route path="/celebrate-your-birthday" element={<CelebrateBirthday />} />
+        <Route path="/birthday" element={<CelebrateBirthday />} />
+
         {/* Projects, Impact & Donate */}
         <Route path="/projects" element={<Projects />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
@@ -40,7 +53,7 @@ function App() {
         <Route path="/wing/:title" element={<WingsDetail />} />
         <Route path="/thank-you" element={<ThankYou />} />
 
-        {/* Legal & Compliance Routes (PhonePe / Gateway Mandatory) */}
+        {/* Legal & Compliance Routes */}
         <Route path="/privacy-policy" element={<LegalPolicy />} />
         <Route path="/privacy" element={<LegalPolicy />} />
         <Route path="/terms" element={<LegalPolicy />} />
