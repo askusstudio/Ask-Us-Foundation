@@ -13,13 +13,32 @@ const API_BASE_URL =
 const WingsDetail = () => {
   const { title } = useParams();
 
-  const wing = wingsData.find(
-    (item) =>
-      item.title.toLowerCase() ===
-      decodeURIComponent(title).toLowerCase()
-  );
+  // Smart case & hyphen/space insensitive matching
+  const rawParam = decodeURIComponent(title || "").trim().toLowerCase();
+  const normalizedParam = rawParam.replace(/[-\s_]/g, "");
 
-  const wingKey = wing ? wing.title.toUpperCase().replace(/\s+/g, '_') : "GENERAL";
+  const wing = wingsData.find((item) => {
+    const itemTitle = (item.title || "").toLowerCase();
+    const itemId = (item.id || "").toLowerCase();
+    const itemSlug = (item.slug || "").toLowerCase();
+
+    const normalizedTitle = itemTitle.replace(/[-\s_]/g, "");
+    const normalizedId = itemId.replace(/[-\s_]/g, "");
+    const normalizedSlug = itemSlug.replace(/[-\s_]/g, "");
+
+    return (
+      itemTitle === rawParam ||
+      itemId === rawParam ||
+      itemSlug === rawParam ||
+      normalizedTitle === normalizedParam ||
+      normalizedId === normalizedParam ||
+      normalizedSlug === normalizedParam ||
+      normalizedTitle.includes(normalizedParam) ||
+      normalizedParam.includes(normalizedTitle)
+    );
+  });
+
+  const wingKey = wing ? (wing.key || wing.id || wing.title).toUpperCase().replace(/\s+/g, '_') : "GENERAL";
 
   const [leaderboard, setLeaderboard] = useState([]);
   const [stats, setStats] = useState({
@@ -61,10 +80,18 @@ const WingsDetail = () => {
 
   if (!wing) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Wing Not Found
-        </h1>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-grow flex flex-col items-center justify-center p-6 text-center">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-3">
+            Wing Not Found
+          </h1>
+          <p className="text-gray-500 mb-6">The wing "{decodeURIComponent(title || '')}" could not be located.</p>
+          <Link to="/" className="px-6 py-2.5 bg-[#F99B2A] text-white rounded-xl font-bold hover:bg-[#E07B0A] transition-colors">
+            Return to Home
+          </Link>
+        </div>
+        <Footer />
       </div>
     );
   }

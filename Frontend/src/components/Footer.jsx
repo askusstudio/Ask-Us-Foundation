@@ -307,15 +307,18 @@ export default function Footer() {
                 </ul>
               </div>
 
+              {/* Exact Wing Routes mapped to wingsData.js */}
               <div>
                 <strong className="text-white block mb-2 font-bold uppercase text-[11px] tracking-wider">
                   Wings & Campaigns
                 </strong>
                 <ul className="space-y-1.5">
-                  <li><Link to="/wing/Education%20Wing" className="hover:text-amber-400 transition-colors">Education Wing</Link></li>
-                  <li><Link to="/wing/Women%20Wing" className="hover:text-amber-400 transition-colors">Women Wing</Link></li>
-                  <li><Link to="/projects" className="hover:text-amber-400 transition-colors">Community Projects</Link></li>
-                  <li><Link to="/donate" className="hover:text-amber-400 transition-colors">Donate Online</Link></li>
+                  <li><Link to="/wing/Revolutioनारी" className="hover:text-amber-400 transition-colors">Women Wing (Revolutioनारी)</Link></li>
+                  <li><Link to="/wing/EmpowerEd" className="hover:text-amber-400 transition-colors">Education (EmpowerEd)</Link></li>
+                  <li><Link to="/wing/GreenSquad" className="hover:text-amber-400 transition-colors">Environment (GreenSquad)</Link></li>
+                  <li><Link to="/wing/PAWerRangers" className="hover:text-amber-400 transition-colors">Animal Care (PAWerRangers)</Link></li>
+                  <li><Link to="/sharang" className="hover:text-amber-400 transition-colors">Sharang 2026</Link></li>
+                  <li><Link to="/celebrate-your-birthday" className="hover:text-amber-400 transition-colors">Birthday Campaign</Link></li>
                 </ul>
               </div>
 
