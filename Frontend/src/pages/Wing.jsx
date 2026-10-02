@@ -8,7 +8,7 @@ import { FaTrophy, FaMedal, FaHeart, FaUsers, FaRupeeSign } from "react-icons/fa
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  "https://p01--ask-us-foundation--8w9bgx4fp8vt.code.run";
+  "https://ask-us-foundation.onrender.com";
 
 const WingsDetail = () => {
   const { title } = useParams();
